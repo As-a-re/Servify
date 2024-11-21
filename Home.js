@@ -2,8 +2,9 @@ import React, { useState, useCallback } from 'react';
 import {  View,  StyleSheet,  Text,  Image,  ScrollView,  TouchableOpacity,  TextInput, RefreshControl, Animated, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import Categories from './Categories.js'
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
@@ -101,7 +102,7 @@ export default function HomeScreen() {
       {/* Quick Actions */}
       <View style={styles.quickActions}>
         {['Schedule', 'Favorites', 'Offers', 'History'].map((action, index) => (
-          <TouchableOpacity key={index} style={styles.quickActionButton}>
+          <TouchableOpacity key={index} style={styles.quickActionButton} onPress={() => navigation.navigate('Categories')}>
             <View style={styles.quickActionIcon}>
               <MaterialIcons
                 name={

@@ -6,7 +6,7 @@ const CATALOG_DATA = [
   {
     id: 'hair',
     name: 'Hair Services',
-    icon: require('./assets/icons/hair-icon.png'),
+    icon: require('./assets/icon.png'),
     items: [
       { id: 'h1', name: 'Haircut', price: 35, description: 'Professional hair styling' },
       { id: 'h2', name: 'Hair Coloring', price: 75, description: 'Full hair color treatment' },
@@ -17,7 +17,7 @@ const CATALOG_DATA = [
   {
     id: 'nail',
     name: 'Nail Services',
-    icon: require('./assets/icons/nail-icon.png'),
+    icon: require('./assets/icon.png'),
     items: [
       { id: 'n1', name: 'Manicure', price: 25, description: 'Classic nail care' },
       { id: 'n2', name: 'Pedicure', price: 35, description: 'Foot and nail treatment' },
@@ -28,7 +28,7 @@ const CATALOG_DATA = [
   {
     id: 'spa',
     name: 'Spa Treatments',
-    icon: require('./assets/icons/spa-icon.png'),
+    icon: require('./assets/icon.png'),
     items: [
       { id: 's1', name: 'Swedish Massage', price: 85, description: 'Full body relaxation massage' },
       { id: 's2', name: 'Deep Tissue Massage', price: 95, description: 'Intense muscle relief' },
@@ -39,7 +39,7 @@ const CATALOG_DATA = [
   {
     id: 'makeup',
     name: 'Makeup Services',
-    icon: require('./assets/icons/makeup-icon.png'),
+    icon: require('./images/3D.png'),
     items: [
       { id: 'm1', name: 'Makeup Application', price: 65, description: 'Full face makeup' },
       { id: 'm2', name: 'Bridal Makeup', price: 120, description: 'Special occasion makeup' },

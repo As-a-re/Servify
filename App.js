@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons for icons
+import Icon from 'react-native-vector-icons/Ionicons'; 
 
 import LandingScreen from './Landing';
 import LoginScreen from './Login';
@@ -10,7 +10,8 @@ import SignupScreen from './Signup';
 import HomeScreen from './Home';
 import SearchScreen from './Search';
 import PlaylistScreen from './Playlist';
-import MylibraryScreen from './Mylibrary';
+import MylibraryScreen from './Add';
+import CategoriesScreen from './Categories'
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,6 +23,7 @@ function AuthStack() {
       <Stack.Screen name="Landing" component={LandingScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="Categories" component={CategoriesScreen} />
     </Stack.Navigator>
   );
 }
