@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, ScrollView, TouchableOpacity, Image, TextInput, Platform, Dimensions } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity, Image, TextInput, Platform, Dimensions, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
 export default function MyAccountScreen({ navigation }) {
   const [profileImage, setProfileImage] = useState(null);
+  const [businessName, setBusinessName] = useState('');
   const [products, setProducts] = useState([]);
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -14,6 +16,16 @@ export default function MyAccountScreen({ navigation }) {
     description: '',
     image: null,
   });
+
+  // Load saved data on mount
+  useEffect(() => {
+    (async () => {
+      const savedProfileImage = await AsyncStorage.getItem('profileImage');
+      const savedBusinessName = await AsyncStorage.getItem('businessName');
+      setProfileImage(savedProfileImage || null);
+      setBusinessName(savedBusinessName || '');
+    })();
+  }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -24,14 +36,66 @@ export default function MyAccountScreen({ navigation }) {
     });
 
     if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setProfileImage(uri);
+      await AsyncStorage.setItem('profileImage', uri);
     }
   };
 
-  const addProduct = () => {
-    if (newProduct.name && newProduct.price) {
-      setProducts([...products, { ...newProduct, id: Date.now() }]);
-      setNewProduct({ name: '', price: '', description: '', image: null });
+  const handleBusinessNameChange = async (text) => {
+    setBusinessName(text);
+    await AsyncStorage.setItem('businessName', text);
+  };
+
+  const addProduct = async () => {
+    if (!newProduct.name || !newProduct.price) {
+      Alert.alert('Error', 'Please fill in all required fields.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://<your_backend_url>/api/products', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer <your_token_here>`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProduct),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setProducts(data.products);
+        setNewProduct({ name: '', price: '', description: '', image: null });
+        Alert.alert('Success', 'Product added successfully!');
+      } else {
+        Alert.alert('Error', data.message || 'Failed to add product.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
+  };
+
+  const deleteProduct = async (productId) => {
+    try {
+      const response = await fetch(`http://<your_backend_url>/api/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer <your_token_here>`,
+        },
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setProducts(data.products);
+        Alert.alert('Success', 'Product deleted successfully!');
+      } else {
+        Alert.alert('Error', data.message || 'Failed to delete product.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
 
@@ -50,9 +114,11 @@ export default function MyAccountScreen({ navigation }) {
             )}
           </TouchableOpacity>
           <View style={styles.businessInfoContainer}>
-            <TextInput 
+            <TextInput
               style={styles.businessName}
               placeholder="Business Name"
+              value={businessName}
+              onChangeText={handleBusinessNameChange}
               placeholderTextColor="#E0E0E0"
             />
             <Text style={styles.businessType}>Business Account</Text>
@@ -65,7 +131,7 @@ export default function MyAccountScreen({ navigation }) {
         {/* Add New Product/Service Card */}
         <View style={styles.addProductCard}>
           <Text style={styles.cardTitle}>Add New Product/Service</Text>
-          
+
           <View style={styles.inputGroup}>
             <MaterialIcons name="shopping-bag" size={24} color="#6B7280" style={styles.inputIcon} />
             <TextInput
@@ -122,7 +188,10 @@ export default function MyAccountScreen({ navigation }) {
                 <TouchableOpacity style={styles.actionButton}>
                   <MaterialIcons name="edit" size={20} color="#6B7280" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => deleteProduct(product.id)}
+                >
                   <MaterialIcons name="delete" size={20} color="#EF4444" />
                 </TouchableOpacity>
               </View>

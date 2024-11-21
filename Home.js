@@ -1,16 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  Text, 
-  Image, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput,
-  RefreshControl,
-  Animated,
-  Platform
-} from 'react-native';
+import {  View,  StyleSheet,  Text,  Image,  ScrollView,  TouchableOpacity,  TextInput, RefreshControl, Animated, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 
