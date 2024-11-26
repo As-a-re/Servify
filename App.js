@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Icon from 'react-native-vector-icons/Ionicons'; 
-
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import LandingScreen from './Landing';
 import LoginScreen from './Login';
 import SignupScreen from './Signup';
@@ -11,12 +11,41 @@ import HomeScreen from './Home';
 import SearchScreen from './Search';
 import PlaylistScreen from './Playlist';
 import MylibraryScreen from './Add';
-import CategoriesScreen from './Categories'
+import CategoriesScreen from './Categories';
+import SPScreen from './SP';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Create a Stack Navigator for the Login and Signup Screens
+// Loading Screen Component
+function LoadingScreen() {
+  const [fadeAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 1000,
+        delay: 1000,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, []);
+
+  return (
+    <View style={styles.loadingContainer}>
+      <Animated.Text style={[styles.loadingText, { opacity: fadeAnim }]}>
+        SERVIFY
+      </Animated.Text>
+    </View>
+  );
+}
+
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -24,11 +53,11 @@ function AuthStack() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="Categories" component={CategoriesScreen} />
+      <Stack.Screen name="SP" component={SPScreen} />
     </Stack.Navigator>
   );
 }
 
-// Create the Tab Navigator for Home, Search, and Playlist
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -37,20 +66,18 @@ function MainTabs() {
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Search') {
-            iconName = focused ? 'search' : 'search-outline';
+            iconName = focused ? 'book' : 'book-outline';
           } else if (route.name === 'Playlist') {
             iconName = focused ? 'musical-notes' : 'musical-notes-outline';
           } else if (route.name === 'Mylibrary') {
-            iconName = focused ? 'download' : 'download-outline';
+            iconName = focused ? 'user' : 'user';
           }
-
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#8B5E3C',
+        tabBarActiveTintColor: '#ACFFAC',
         tabBarInactiveTintColor: 'gray',
       })}
     >
@@ -62,17 +89,46 @@ function MainTabs() {
   );
 }
 
-// Combine the AuthStack and MainTabs into the Main App
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time (you can replace this with actual initialization logic)
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // 3 seconds loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* If not logged in, show the Auth Stack */}
         <Stack.Screen name="Auth" component={AuthStack} />
-
-        {/* Main App Navigation Tabs */}
         <Stack.Screen name="Main" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#ACFFAC',
+    letterSpacing: 4,
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+});

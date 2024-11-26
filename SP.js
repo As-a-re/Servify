@@ -1,169 +1,247 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-const ServiceAndProduct = () => {
-  const [ratings, setRatings] = useState({});
+export default function SPScreen({ route, navigation }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { serviceName = "Service", providerName = "Provider" } = route.params || {};
+  const [messages, setMessages] = useState([]);
+  const [messageText, setMessageText] = useState("");
 
-  const products = [
-    {
-      id: 1,
-      name: 'Premium Taxi Service',
-      description: 'Safe, reliable, and convenient taxi services for students.',
-      image: 'https://via.placeholder.com/300x200.png?text=Taxi+Service',
-      price: '$10/trip',
-    },
-    {
-      id: 2,
-      name: 'Shuttle Reservations',
-      description: 'Reserve your seat for university shuttle services with ease.',
-      image: 'https://via.placeholder.com/300x200.png?text=Shuttle+Service',
-      price: 'Free',
-    },
-  ];
-
-  const handleRating = (productId, star) => {
-    setRatings({ ...ratings, [productId]: star });
+  const toggleMenu = () => {
+    setMenuOpen((prevMenuOpen) => !prevMenuOpen);
   };
 
-  const renderStars = (productId) => {
-    const userRating = ratings[productId] || 0;
-    return (
-      <View style={styles.starsContainer}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <TouchableOpacity key={star} onPress={() => handleRating(productId, star)}>
-            <Ionicons
-              name={star <= userRating ? 'star' : 'star-outline'}
-              size={24}
-              color={star <= userRating ? '#FFD700' : '#B0B0B0'}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
+  const closeMenu = () => {
+    if (menuOpen) setMenuOpen(false);
   };
+
+  const sendMessage = () => {
+    if (messageText.trim() === "") return;
+    const newMessage = {
+      id: Date.now().toString(),
+      text: messageText,
+      sender: "user",
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessageText("");
+  };
+
+  const renderMessage = ({ item }) => (
+    <View
+      style={[
+        styles.messageBubble,
+        item.sender === "user" ? styles.userBubble : styles.providerBubble,
+      ]}
+    >
+      <Text
+        style={[
+          styles.messageText,
+          { color: item.sender === "user" ? "white" : "black" },
+        ]}
+      >
+        {item.text}
+      </Text>
+    </View>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Our Services & Products</Text>
-        <Text style={styles.subtitle}>Making your campus life easier!</Text>
-      </View>
-
-      {/* Product Cards */}
-      <View style={styles.productContainer}>
-        {products.map((product) => (
-          <View key={product.id} style={styles.productCard}>
-            <Image source={{ uri: product.image }} style={styles.productImage} />
-            <Text style={styles.productName}>{product.name}</Text>
-            <Text style={styles.productDescription}>{product.description}</Text>
-            <Text style={styles.productPrice}>{product.price}</Text>
-            {renderStars(product.id)}
-            <TouchableOpacity style={styles.buyButton}>
-              <Text style={styles.buyButtonText}>Learn More</Text>
+    <TouchableWithoutFeedback onPress={closeMenu}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        {menuOpen && (
+          <View style={styles.menu}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                navigation.navigate("Main");
+                toggleMenu();
+              }}
+            >
+              <Ionicons name="home-outline" size={20} color="#2E7D32" />
+              <Text style={styles.menuText}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                navigation.navigate("About");
+                toggleMenu();
+              }}
+            >
+              <Ionicons name="information-circle-outline" size={20} color="#2E7D32" />
+              <Text style={styles.menuText}>About</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                navigation.navigate("Contact");
+                toggleMenu();
+              }}
+            >
+              <Ionicons name="call-outline" size={20} color="#2E7D32" />
+              <Text style={styles.menuText}>Contact</Text>
             </TouchableOpacity>
           </View>
-        ))}
-      </View>
+        )}
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.contactButton}>
-          <Ionicons name="chatbox-ellipses-outline" size={20} color="#FFF" />
-          <Text style={styles.contactButtonText}>Contact Us</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
+            <Ionicons name="menu-outline" size={28} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.title}>Chat with {providerName}</Text>
+            <Text style={styles.subtitle}>Discuss about: {serviceName}</Text>
+          </View>
+          <View style={styles.hamburgerPlaceholder} />
+        </View>
+
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={renderMessage}
+          contentContainerStyle={styles.chatContainer}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No messages yet. Start chatting!</Text>
+          }
+        />
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={messageText}
+            onChangeText={setMessageText}
+            placeholder="Type a message..."
+            placeholderTextColor="#666"
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  // Styles remain the same
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
-    paddingHorizontal: 20,
+    backgroundColor: "#f9fafb",
   },
   header: {
-    marginVertical: 20,
-    alignItems: 'center',
+    padding: 20,
+    backgroundColor: "#2E7D32",
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  headerTextContainer: {
+    flex: 1,
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+  hamburgerButton: {
+    width: 28,
+  },
+  hamburgerPlaceholder: {
+    width: 28,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: '#777',
-    marginTop: 5,
+    color: "#e0e0e0",
+    marginTop: 8,
+    textAlign: "center",
   },
-  productContainer: {
-    marginTop: 20,
-  },
-  productCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    marginBottom: 20,
-    overflow: 'hidden',
-    elevation: 2,
-    padding: 10,
-  },
-  productImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-  },
-  productName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 10,
-  },
-  productDescription: {
-    fontSize: 14,
-    color: '#777',
-    marginTop: 5,
-  },
-  productPrice: {
-    fontSize: 16,
-    color: '#1e88e5',
-    marginTop: 5,
-  },
-  starsContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  buyButton: {
-    backgroundColor: '#1e88e5',
-    padding: 10,
-    alignItems: 'center',
-    marginTop: 10,
-    borderRadius: 5,
-  },
-  buyButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  footer: {
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  contactButton: {
-    flexDirection: 'row',
-    backgroundColor: '#1e88e5',
-    paddingVertical: 10,
+  menu: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "60%",
+    height: "100%",
+    backgroundColor: "#FFF",
+    paddingTop: 50,
     paddingHorizontal: 20,
-    borderRadius: 20,
-    alignItems: 'center',
+    elevation: 5,
+    zIndex: 10,
   },
-  contactButtonText: {
-    color: '#FFF',
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  menuText: {
+    fontSize: 18,
+    marginLeft: 15,
+    color: "#333",
+  },
+  chatContainer: {
+    flexGrow: 1,
+    padding: 20,
+  },
+  messageBubble: {
+    maxWidth: "75%",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  userBubble: {
+    alignSelf: "flex-end",
+    backgroundColor: "#34D399",
+  },
+  providerBubble: {
+    alignSelf: "flex-start",
+    backgroundColor: "#e5e5ea",
+  },
+  messageText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 10,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#aaa",
+    marginTop: 20,
+    fontSize: 16,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    backgroundColor: "#f1f1f1",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  sendButton: {
+    backgroundColor: "#2E7D32",
+    padding: 10,
+    borderRadius: 8,
+  },
+  sendButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
-
-export default ServiceAndProduct;

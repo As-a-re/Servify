@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   header: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#2E7D32',
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   addButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#2E7D32',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#10B981',
+    color: '#2E7D32',
   },
   productDescription: {
     fontSize: 14,

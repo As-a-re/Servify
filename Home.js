@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import {  View,  StyleSheet,  Text,  Image,  ScrollView,  TouchableOpacity,  TextInput, RefreshControl, Animated, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import Categories from './Categories.js'
 
 export default function HomeScreen({ navigation }) {
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -101,23 +100,24 @@ export default function HomeScreen({ navigation }) {
 
       {/* Quick Actions */}
       <View style={styles.quickActions}>
-        {['Schedule', 'Favorites', 'Offers', 'History'].map((action, index) => (
-          <TouchableOpacity key={index} style={styles.quickActionButton} onPress={() => navigation.navigate('Categories')}>
-            <View style={styles.quickActionIcon}>
-              <MaterialIcons
-                name={
-                  index === 0 ? 'event' :
-                  index === 1 ? 'favorite' :
-                  index === 2 ? 'local-offer' : 'history'
-                }
-                size={24}
-                color="#2E7D32"
-              />
-            </View>
-            <Text style={styles.quickActionText}>{action}</Text>
-          </TouchableOpacity>
-        ))}
+  {[
+    { action: 'Schedule', icon: 'event', screen: 'Playlist' },
+    { action: 'Favorites', icon: 'favorite', screen: 'SP' },
+    { action: 'Offers', icon: 'local-offer', screen: 'OffersScreen' },
+    { action: 'History', icon: 'history', screen: 'HistoryScreen' },
+  ].map(({ action, icon, screen }, index) => (
+    <TouchableOpacity
+      key={index}
+      style={styles.quickActionButton}
+      onPress={() => navigation.navigate(screen)}
+    >
+      <View style={styles.quickActionIcon}>
+        <MaterialIcons name={icon} size={24} color="#2E7D32" />
       </View>
+      <Text style={styles.quickActionText}>{action}</Text>
+    </TouchableOpacity>
+  ))}
+</View>
 
       {/* Featured Services Section */}
       <View style={styles.section}>
@@ -161,23 +161,28 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={styles.categoriesGrid}>
-          {visibleCategories.map((category) => (
-            <TouchableOpacity
-              key={category.id}
-              style={[
-                styles.categoryCard,
-                selectedCategory === category.id && styles.selectedCategory
-              ]}
-              onPress={() => setSelectedCategory(category.id)}
-            >
-              <View style={styles.categoryIcon}>
-                <MaterialIcons name={category.icon} size={24} color="#2E7D32" />
-              </View>
-              <Text style={styles.categoryName}>{category.name}</Text>
-              <Text style={styles.categoryCount}>{category.count}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+  {visibleCategories.map((category) => (
+    <TouchableOpacity
+      key={category.id}
+      style={[
+        styles.categoryCard,
+        selectedCategory === category.id && styles.selectedCategory,
+      ]}
+      onPress={() =>
+        navigation.navigate('Categories', {
+          categoryId: category.id,
+          categoryName: category.name,
+        })
+      }
+    >
+      <View style={styles.categoryIcon}>
+        <MaterialIcons name={category.icon} size={24} color="#2E7D32" />
+      </View>
+      <Text style={styles.categoryName}>{category.name}</Text>
+      <Text style={styles.categoryCount}>{category.count}</Text>
+    </TouchableOpacity>
+  ))}
+      </View>
       </View>
 
       {/* Trending Services */}

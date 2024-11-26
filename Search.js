@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
     padding: 16,
-    paddingBottom: 30
+    paddingBottom: 30,
   },
   headerContainer: {
     alignItems: 'center',
