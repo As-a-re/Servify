@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
 
-  // Sample product data - replace with your actual product data
   const products = [
     {
       id: '1',
@@ -25,7 +25,7 @@ const ProfileScreen = () => {
       reviews: 85,
       providerName: 'Green Thumb Landscaping',
       image: './images/3D.png',
-      description: 'Expert lawn mowing and yard maintenance. Reliable and professional service.'
+      description: 'Expert lawn mowing and yard maintenance. Reliable and professional service.',
     },
     {
       id: '3',
@@ -35,7 +35,7 @@ const ProfileScreen = () => {
       reviews: 200,
       providerName: 'Fix-It Plumbers',
       image: './images/3D.png',
-      description: 'Professional plumbing repairs and installations. Quick and reliable service.'
+      description: 'Professional plumbing repairs and installations. Quick and reliable service.',
     },
     {
       id: '4',
@@ -45,7 +45,7 @@ const ProfileScreen = () => {
       reviews: 150,
       providerName: 'Spark Electric',
       image: './images/3D.png',
-      description: 'Comprehensive electrical services for residential and commercial properties.'
+      description: 'Comprehensive electrical services for residential and commercial properties.',
     },
     {
       id: '5',
@@ -55,7 +55,7 @@ const ProfileScreen = () => {
       reviews: 95,
       providerName: 'Color Splash Painters',
       image: './images/3D.png',
-      description: 'Professional interior and exterior painting services with high-quality finishes.'
+      description: 'Professional interior and exterior painting services with high-quality finishes.',
     },
     {
       id: '6',
@@ -65,7 +65,7 @@ const ProfileScreen = () => {
       reviews: 250,
       providerName: 'Swift Movers',
       image: './images/3D.png',
-      description: 'Efficient and careful moving services for local and long-distance moves.'
+      description: 'Efficient and careful moving services for local and long-distance moves.',
     },
     {
       id: '7',
@@ -75,18 +75,8 @@ const ProfileScreen = () => {
       reviews: 110,
       providerName: 'Spotless Carpets',
       image: './images/3D.png',
-      description: 'Deep cleaning and stain removal for all types of carpets and rugs.'
+      description: 'Deep cleaning and stain removal for all types of carpets and rugs.',
     },
-    {
-      id: '8',
-      name: 'Tutoring Service',
-      price: 40,
-      rating: 4.8,
-      reviews: 75,
-      providerName: 'Smart Minds Education',
-      image: './images/3D.png',
-      description: 'Personalized tutoring services for students of all ages and subjects.'
-    }
   ];
 
   const handleProductPress = (product) => {
@@ -105,10 +95,7 @@ const ProfileScreen = () => {
       style={styles.productCard} 
       onPress={() => handleProductPress(item)}
     >
-      <Image 
-        source={{ uri: item.image }} 
-        style={styles.productImage} 
-      />
+      <Image source={{ uri: item.image }} style={styles.productImage} />
       <View style={styles.productDetails}>
         <Text style={styles.productName} numberOfLines={2}>
           {item.name}
@@ -124,7 +111,14 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Services</Text>
+        <View style={styles.placeholder} /> {/* For header symmetry */}
       </View>
       <FlatList
         data={products}
@@ -133,6 +127,7 @@ const ProfileScreen = () => {
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={true}
       />
     </SafeAreaView>
   );
@@ -146,16 +141,25 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#2E7D32',
     padding: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
+  backButton: {
+    padding: 8,
+  },
+  placeholder: {
+    width: 40, 
+  },
   listContainer: {
     paddingHorizontal: 8,
     paddingTop: 8,
+    paddingBottom: 16, 
   },
   row: {
     justifyContent: 'space-between',
@@ -166,7 +170,10 @@ const styles = StyleSheet.create({
     width: '48%',
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,

@@ -11,17 +11,36 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "devClient": true,
+    "description": "This is a sample app for demonstration purposes.",
+    "privacy": "public",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.myapp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera for capturing photos.",
+        "NSLocationWhenInUseUsageDescription": "This app requires access to your location."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.example.myapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "privacyPolicyUrl": "https://example.com/privacy",
+      "eas": {
+        "projectId": "9d291d70-9075-4889-8a15-867d2bc91b08"
+      }
     }
   }
 }

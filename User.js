@@ -62,6 +62,7 @@ export default function UserScreen({ navigation }) {
     <ScrollView style={styles.container}>
       {/* Profile Header */}
       <View style={styles.profileHeader}>
+      <TouchableOpacity onPress={() => navigation.navigate ('Main', {screen:'Home'})} style={styles.back}></TouchableOpacity>
         <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
           {profileImage ? (
             <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -180,6 +181,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E7D32',
     alignItems: 'center',
     paddingVertical: 30,
+  },
+  back: {
+    backgroundColor: '#66FFBFFF',
+    width: 30,
+    height: 20,
+    alignItems: 'center',
+    marginLeft: -300,
+    borderRadius: 15,
+    fontSize: 25,
+    fontWeight: 'bold',
   },
   profileImageContainer: {
     position: 'relative',

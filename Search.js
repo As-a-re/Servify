@@ -109,7 +109,7 @@ export default function WeeklyCalendar() {
       <View style={styles.container}>
         {/* Header Section */}
         <View style={styles.headerContainer}>
-          <Text style={styles.title}>Bookings</Text>
+      
           <View style={styles.monthContainer}>
             <TouchableOpacity onPress={() => changeWeek(-1)}>
               <Text style={styles.arrow}>{"<"}</Text>

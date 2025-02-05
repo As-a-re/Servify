@@ -6,7 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios'; // Make sure to install axios: npm install axios
 
 const { width } = Dimensions.get('window');
-const API_URL = 'http://10.21.32.104:5000/api'; // Replace with your backend IP/URL
+const API_URL = 'http://10.21.32.23:5000/api'; // Replace with your backend IP/URL
 
 export default function MyAccountScreen({ navigation, route }) {
   const [profileImage, setProfileImage] = useState(null);
@@ -402,6 +402,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 4,
+    marginLeft: -10,
   },
   businessType: {
     fontSize: 14,

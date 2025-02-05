@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 10,
+    height: 100,
   },
   backButton: {
     marginRight: 15,
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
+    marginLeft: 30,
   },
   image: {
     width: '100%',

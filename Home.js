@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {  View,  StyleSheet,  Text,  Image,  ScrollView,  TouchableOpacity,  TextInput, RefreshControl, Animated, Platform } from 'react-native';
+import {  View,  StyleSheet,  Text,  Image,  ScrollView,  TouchableOpacity,  TextInput, RefreshControl, Animated, Platform, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 
@@ -50,6 +50,45 @@ export default function HomeScreen({ navigation }) {
     },
   ];
 
+  const products = [
+    {
+      id: 1,
+      title: 'Wireless Headphones',
+      price: '$150',
+      image: require('./images/3D.png'),
+    },
+    {
+      id: 2,
+      title: 'Smartwatch',
+      price: '$120',
+      image: require('./images/3D.png'),
+    },
+    {
+      id: 3,
+      title: 'Bluetooth Speaker',
+      price: '$60',
+      image: require('./images/3D.png'),
+    },
+    {
+      id: 4,
+      title: 'Gaming Mouse',
+      price: '$40',
+      image: require('./images/3D.png'),
+    },
+    {
+      id: 5,
+      title: 'VR Headset',
+      price: '$300',
+      image: require('./images/3D.png'),
+    },
+    {
+      id: 6,
+      title: 'Portable Charger',
+      price: '$25',
+      image: require('./images/3D.png'),
+    },
+  ];
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     // Simulate data refresh
@@ -58,10 +97,22 @@ export default function HomeScreen({ navigation }) {
 
   const visibleCategories = showAllCategories ? categories : categories.slice(0, 4);
 
+  const renderProductCard = ({ item }) => (
+    <TouchableOpacity
+      style={styles.productCard}
+      onPress={() => navigation.navigate('AdditionalScreens', { screen: 'Playlist', productId: item.id })}
+    >
+      <Image style={styles.productImage} source={item.image} />
+      <View style={styles.productInfo}>
+        <Text style={styles.productTitle}>{item.title}</Text>
+        <Text style={styles.productPrice}>{item.price}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <ScrollView
+    <View
       style={styles.container}
-      showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -120,6 +171,7 @@ export default function HomeScreen({ navigation }) {
 </View>
 
       {/* Featured Services Section */}
+      <ScrollView vertical showsVerticalScrollIndicator={false}>
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured Services</Text>
@@ -148,7 +200,7 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           ))}
         </ScrollView>
-      </View>
+        </View>
 
       {/* Categories Section */}
       <View style={styles.section}>
@@ -185,35 +237,20 @@ export default function HomeScreen({ navigation }) {
       </View>
       </View>
 
-      {/* Trending Services */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Trending Now</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAllButton}>See All</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {featuredServices.map((service) => (
-            <TouchableOpacity key={service.id} style={styles.trendingCard}>
-              <View style={styles.trendingImageContainer}>
-                <Image style={styles.trendingImage} source={require('./images/3D.png')} />
-                <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.8)']}
-                  style={styles.trendingGradient}
-                >
-                  <Text style={styles.trendingTitle}>{service.title}</Text>
-                  <View style={styles.trendingRating}>
-                    <MaterialIcons name="star" size={16} color="#FFD700" />
-                    <Text style={styles.trendingRatingText}>{service.rating}</Text>
-                  </View>
-                </LinearGradient>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+      {/* Product Grid Section */}
+      <View style={styles.section2}>
+        <Text style={styles.section2Title}>Products</Text>
+        <FlatList
+          data={products}
+          renderItem={renderProductCard}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          columnWrapperStyle={styles.productRow}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -471,44 +508,53 @@ const styles = StyleSheet.create({
     borderColor: '#2E7D32',
     borderWidth: 1,
   },
-  trendingCard: {
-    width: 200,
-    height: 250,
-    marginRight: 15,
-    borderRadius: 15,
-    overflow: 'hidden',
+  section2: {
+    padding: 20,
   },
-  trendingImageContainer: {
-    width: '100%',
-    height: '100%',
-    position: 'relative',
-  },
-  trendingImage: {
-    width: '100%',
-    height: '100%',
-  },
-  trendingGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '50%',
-    padding: 15,
-    justifyContent: 'flex-end',
-  },
-  trendingTitle: {
-    color: '#FFF',
-    fontSize: 16,
+  section2Title: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
+    color: '#333',
+    marginBottom: 10,
   },
-  trendingRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  productRow: {
+    justifyContent: 'space-between',
   },
-  trendingRatingText: {
-    color: '#FFF',
+  productCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 15,
+    marginBottom: 15,
+    overflow: 'hidden',
+    flex: 1,
+    marginHorizontal: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  productImage: {
+    width: '100%',
+    height: 120,
+  },
+  productInfo: {
+    padding: 10,
+  },
+  productTitle: {
     fontSize: 14,
-    marginLeft: 5,
+    fontWeight: '600',
+    color: '#333',
+  },
+  productPrice: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+    marginTop: 5,
   },
 });
