@@ -1,30 +1,67 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { servicesAPI } from './services/api';
 
 const ServicesPage = ({ navigation }) => {
-  const services = [
-    { id: '1', name: 'Plumbing Services', description: 'Fix leaks, installations, and repairs.' },
-    { id: '2', name: 'Electrician Services', description: 'Wiring, installations, and repairs.' },
-    { id: '3', name: 'Graphic Design', description: 'Logos, branding, and more.' },
-    // Add more services...
-  ];
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await servicesAPI.getAllServices();
+        setServices(response.data.services || []);
+      } catch (err) {
+        setError('Failed to fetch services');
+        console.error('Fetch services error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Browse Services</Text>
+
       <FlatList
         data={services}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id || item.id}
         renderItem={({ item }) => (
-        <TouchableOpacity
+          <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('ServiceDetails', { service: item })}
-        >
-            <Text style={styles.cardTitle}>{item.name}</Text>
-            <Text style={styles.cardDescription}>{item.description}</Text>
-        </TouchableOpacity>
+            onPress={() =>
+              navigation.navigate('ServiceDetails', { service: item })
+            }
+          >
+            <Text style={styles.cardTitle}>
+              {item.name || item.title}
+            </Text>
+            <Text style={styles.cardDescription}>
+              {item.description}
+            </Text>
+          </TouchableOpacity>
         )}
-        />
+      />
     </View>
   );
 };

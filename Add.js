@@ -6,9 +6,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios'; // Make sure to install axios: npm install axios
 
 const { width } = Dimensions.get('window');
-const API_URL = 'http://10.21.32.23:5000/api'; // Replace with your backend IP/URL
+const API_URL = 'http://localhost:5000/api'; // Replace with your backend IP/URL
 
 export default function MyAccountScreen({ navigation, route }) {
+  const [user, setUser] = useState(route.params?.user || null);
   const [profileImage, setProfileImage] = useState(null);
   const [businessName, setBusinessName] = useState('');
   const [products, setProducts] = useState([]);
@@ -24,16 +25,22 @@ export default function MyAccountScreen({ navigation, route }) {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        // Retrieve token from AsyncStorage
-        const storedToken = await AsyncStorage.getItem('userToken');
-        if (storedToken) {
+        const [storedToken, storedUser] = await Promise.all([
+          AsyncStorage.getItem('userToken'),
+          AsyncStorage.getItem('userData')
+        ]);
+
+        if (storedToken && storedUser) {
           setToken(storedToken);
-          
-          // Fetch products
-          await fetchProducts(storedToken);
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          await fetchProducts(storedToken, parsedUser._id);
         }
       } catch (error) {
         console.error('Error loading initial data:', error);
+        Alert.alert('Error', 'Failed to load user data');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -142,15 +149,15 @@ export default function MyAccountScreen({ navigation, route }) {
   // Add new product
   const addProduct = async () => {
     // Validate required fields
-    if (!newProduct.name || !newProduct.price) {
+    if (!newProduct.name?.trim() || !newProduct.price) {
       Alert.alert('Error', 'Please fill in product name and price');
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.append('name', newProduct.name);
-      formData.append('price', newProduct.price);
+      formData.append('name', newProduct.name.trim());
+      formData.append('price', parseFloat(newProduct.price));
       
       // Add optional description
       if (newProduct.description) {
@@ -322,36 +329,46 @@ export default function MyAccountScreen({ navigation, route }) {
         {/* Products List */}
         <View style={styles.productsSection}>
           <Text style={styles.sectionTitle}>Your Products/Services</Text>
-          {products.map((product) => (
-            <View key={product._id} style={styles.productCard}>
-              {product.image && (
-                <Image 
-                  source={{ 
-                    uri: product.image.startsWith('http') 
-                      ? product.image 
-                      : `${API_URL.replace('/api', '')}/${product.image}` 
-                  }} 
-                  style={styles.productImage} 
-                />
-              )}
-              <View style={styles.productHeader}>
-                <Text style={styles.productTitle}>{product.name}</Text>
-                <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
-              </View>
-              <Text style={styles.productDescription}>{product.description}</Text>
-              <View style={styles.productActions}>
-                <TouchableOpacity style={styles.actionButton}>
-                  <MaterialIcons name="edit" size={20} color="#6B7280" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => deleteProduct(product._id)}
-                >
-                  <MaterialIcons name="delete" size={20} color="#EF4444" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
+          {Array.isArray(products) && products.length > 0 ? (
+    products.map((product) => (
+      <View key={product._id} style={styles.productCard}>
+        {product.image && (
+          <Image 
+            source={{ 
+              uri: product.image.startsWith('http') 
+                ? product.image 
+                : `${API_URL.replace('/api', '')}/${product.image}` 
+            }} 
+            style={styles.productImage} 
+          />
+        )}
+        <View style={styles.productHeader}>
+          <Text style={styles.productTitle}>{product.name}</Text>
+          <Text style={styles.productPrice}>${parseFloat(product.price).toFixed(2)}</Text>
+        </View>
+        {product.description && (
+          <Text style={styles.productDescription}>{product.description}</Text>
+        )}
+        <View style={styles.productActions}>
+          <TouchableOpacity style={styles.actionButton}>
+            <MaterialIcons name="edit" size={20} color="#6B7280" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => deleteProduct(product._id)}
+          >
+            <MaterialIcons name="delete" size={20} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    ))
+  ) : (
+    <View style={styles.emptyState}>
+      <MaterialIcons name="inventory" size={50} color="#9CA3AF" />
+      <Text style={styles.emptyStateText}>No products yet</Text>
+      <Text style={styles.emptyStateSubtext}>Add your first product to get started</Text>
+    </View>
+  )}
         </View>
       </View>
     </ScrollView>

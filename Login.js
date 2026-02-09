@@ -1,47 +1,66 @@
 import React, { useState } from 'react';
 import { View, Pressable, Image, ImageBackground, Text, TextInput, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = 'http://10.21.32.40:5000/api';
+import { authAPI } from './services/api';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password });
-      
-      if (response.data.success) {
-        // Store the token
+      setLoading(true);
+
+      // ✅ Use authAPI instead of axios
+      const response = await authAPI.login(email, password);
+
+      if (response.data?.token) {
+        // Store token and user data
         await AsyncStorage.setItem('userToken', response.data.token);
-        await AsyncStorage.setItem('userData', JSON.stringify(response.data.user));
-        
+        await AsyncStorage.setItem(
+          'userData',
+          JSON.stringify(response.data.user)
+        );
+
         Alert.alert('Success', 'Login successful');
-        navigation.replace('Main');
+        // Reset the navigation stack to prevent going back to auth screens
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
       } else {
-        Alert.alert('Error', response.data.message || 'Invalid credentials');
+        Alert.alert('Error', 'Invalid credentials');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to login';
+      const errorMessage =
+        error.response?.data?.message || 'Failed to login';
       Alert.alert('Error', errorMessage);
       console.error('Login error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.main}>
-      <ImageBackground source={require('./images/3D.png')} style={styles.image}>
+      <ImageBackground
+        source={require('./images/3D.png')}
+        style={styles.image}
+      >
         <View style={styles.container}>
           <Text style={styles.tan}>Login</Text>
+
           <View style={styles.man}>
             <TextInput
               placeholder="Email"
               style={styles.input}
               onChangeText={setEmail}
               value={email}
+              autoCapitalize="none"
+              keyboardType="email-address"
             />
+
             <TextInput
               placeholder="Password"
               style={styles.input}
@@ -49,18 +68,43 @@ export default function LoginScreen({ navigation }) {
               onChangeText={setPassword}
               value={password}
             />
-            <Pressable style={styles.pen} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Login</Text>
+
+            <Pressable
+              style={styles.pen}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Logging in...' : 'Login'}
+              </Text>
             </Pressable>
-            <Pressable style={styles.pern} onPress={() => navigation.navigate('Landing')}>
-              <Image source={require('./images/3D.png')} style={styles.icon} />
+
+            <Pressable
+              style={styles.pern}
+              onPress={() => navigation.navigate('Landing')}
+            >
+              <Image
+                source={require('./images/3D.png')}
+                style={styles.icon}
+              />
               <Text style={styles.socialText}>Google</Text>
             </Pressable>
-            <Pressable style={styles.pean} onPress={() => navigation.navigate('Main')}>
-              <Image source={require('./images/3D.png')} style={styles.icon} />
+
+            <Pressable
+              style={styles.pean}
+              onPress={() => navigation.navigate('Main')}
+            >
+              <Image
+                source={require('./images/3D.png')}
+                style={styles.icon}
+              />
               <Text style={styles.socialText}>Facebook</Text>
             </Pressable>
-            <Text style={styles.pien} onPress={() => navigation.navigate('Signup')}>
+
+            <Text
+              style={styles.pien}
+              onPress={() => navigation.navigate('Signup')}
+            >
               Create an account
             </Text>
           </View>

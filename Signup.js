@@ -1,55 +1,120 @@
 import React, { useState } from 'react';
 import { View, Pressable, StyleSheet, Text, TextInput, ImageBackground, Image, Alert } from 'react-native';
-import axios from 'axios';
-
-const API_URL = 'http://10.21.32.40:5000/api';
+import { authAPI } from './services/api';
 
 export default function SignupScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [profession, setProfession] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post(`${API_URL}/signup`, { name, profession, email, password });
-      if (response.data.success) {
-        Alert.alert('Account created successfully');
+      setLoading(true);
+
+      // ✅ Use authAPI instead of axios
+      const response = await authAPI.signup({
+        name,
+        profession,
+        email,
+        password,
+      });
+
+      if (response.data?.success || response.data?.user) {
+        Alert.alert('Success', 'Account created successfully');
         navigation.navigate('Login');
       } else {
-        Alert.alert('Error', response.data.message);
+        Alert.alert(
+          'Error',
+          response.data?.message || 'Signup failed'
+        );
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to sign up');
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || 'Failed to sign up'
+      );
       console.error('Signup error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.main}>
-      <ImageBackground source={require('./images/3D.png')} style={styles.mat}>
+      <ImageBackground
+        source={require('./images/3D.png')}
+        style={styles.mat}
+      >
         <View style={styles.contain}>
           <Text style={styles.nat}>Sign-up</Text>
-          <TextInput placeholder="Name" style={styles.tip} onChangeText={setName} value={name} />
-          <TextInput placeholder="Profession" style={styles.tip} onChangeText={setProfession} value={profession} />
-          <TextInput placeholder="Email" style={styles.tip} onChangeText={setEmail} value={email} />
-          <TextInput placeholder="Password" style={styles.tip} secureTextEntry onChangeText={setPassword} value={password} />
-          <Pressable style={styles.tint} onPress={handleSignup}>
-            <Text style={styles.buttonText}>Done</Text>
+
+          <TextInput
+            placeholder="Name"
+            style={styles.tip}
+            onChangeText={setName}
+            value={name}
+          />
+
+          <TextInput
+            placeholder="Profession"
+            style={styles.tip}
+            onChangeText={setProfession}
+            value={profession}
+          />
+
+          <TextInput
+            placeholder="Email"
+            style={styles.tip}
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+
+          <TextInput
+            placeholder="Password"
+            style={styles.tip}
+            secureTextEntry
+            onChangeText={setPassword}
+            value={password}
+          />
+
+          <Pressable
+            style={styles.tint}
+            onPress={handleSignup}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? 'Creating...' : 'Done'}
+            </Text>
           </Pressable>
 
           <Text style={styles.orText}>or continue with</Text>
+
           <View style={styles.socialButtonsContainer}>
             <Pressable style={styles.socialButton}>
-              <Image source={require('./images/3D.png')} style={styles.icon} />
+              <Image
+                source={require('./images/3D.png')}
+                style={styles.icon}
+              />
               <Text style={styles.socialButtonText}>Google</Text>
             </Pressable>
+
             <Pressable style={styles.socialButton}>
-              <Image source={require('./images/3D.png')} style={styles.icon} />
+              <Image
+                source={require('./images/3D.png')}
+                style={styles.icon}
+              />
               <Text style={styles.socialButtonText}>Facebook</Text>
             </Pressable>
+
             <Pressable style={styles.socialButton}>
-              <Image source={require('./images/3D.png')} style={styles.icon} />
+              <Image
+                source={require('./images/3D.png')}
+                style={styles.icon}
+              />
               <Text style={styles.socialButtonText}>Apple</Text>
             </Pressable>
           </View>

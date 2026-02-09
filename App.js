@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+// Screens
 import LandingScreen from './Landing';
 import LoginScreen from './Login';
 import SignupScreen from './Signup';
@@ -20,11 +23,13 @@ import OfferScreen from './Offer';
 import UserScreen from './User';
 import ProfileScreen from './Profile';
 
-// Initialize navigators
+// Navigators
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Loading Screen Component
+/* =========================
+   Loading Screen
+========================= */
 function LoadingScreen() {
   const [fadeAnim] = useState(new Animated.Value(0));
 
@@ -33,7 +38,7 @@ function LoadingScreen() {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 1000,
-        useNativeDriver: true, // Ensure native driver is used
+        useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -53,7 +58,9 @@ function LoadingScreen() {
   );
 }
 
-// Auth Stack with screen navigation
+/* =========================
+   Auth Stack
+========================= */
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -64,6 +71,9 @@ function AuthStack() {
   );
 }
 
+/* =========================
+   Additional Screens
+========================= */
 function AdditionalScreensStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -80,7 +90,9 @@ function AdditionalScreensStack() {
   );
 }
 
-// Main Tabs with tab navigation
+/* =========================
+   Main Tabs
+========================= */
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -89,15 +101,19 @@ function MainTabs() {
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
+
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Search') {
             iconName = focused ? 'search' : 'search-outline';
           } else if (route.name === 'Playlist') {
-            iconName = focused ? 'musical-notes' : 'musical-notes-outline';
+            iconName = focused
+              ? 'musical-notes'
+              : 'musical-notes-outline';
           } else if (route.name === 'Mylibrary') {
             iconName = focused ? 'library' : 'library-outline';
           }
+
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#ACFFAC',
@@ -112,16 +128,32 @@ function MainTabs() {
   );
 }
 
+/* =========================
+   App Root
+========================= */
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Simulate loading time (you can replace this with actual initialization logic)
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); // 3 seconds loading time
+    const initApp = async () => {
+      try {
+        // Splash delay (kept from original)
+        await new Promise(resolve => setTimeout(resolve, 3000));
 
-    return () => clearTimeout(timer);
+        // Auth check
+        const token = await AsyncStorage.getItem('userToken');
+        if (token) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initApp();
   }, []);
 
   if (isLoading) {
@@ -131,9 +163,17 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Auth" component={AuthStack} />
-        <Stack.Screen name="Main" component={MainTabs} />
-        <Stack.Screen name="AdditionalScreens" component={AdditionalScreensStack} />
+        {isAuthenticated ? (
+          <>
+            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen
+              name="AdditionalScreens"
+              component={AdditionalScreensStack}
+            />
+          </>
+        ) : (
+          <Stack.Screen name="Auth" component={AuthStack} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

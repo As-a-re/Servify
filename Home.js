@@ -1,106 +1,80 @@
-import React, { useState, useCallback } from 'react';
-import {  View,  StyleSheet,  Text,  Image,  ScrollView,  TouchableOpacity,  TextInput, RefreshControl, Animated, Platform, FlatList } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, TextInput, RefreshControl, Platform, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { categoriesAPI, servicesAPI } from './services/api';
 
 export default function HomeScreen({ navigation }) {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [featuredServices, setFeaturedServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [serviceTypes, setServiceTypes] = useState([]);
 
-  const categories = [
-    { id: 1, name: 'Food & Beverage', icon: 'restaurant-menu', count: '2.5k+' },
-    { id: 2, name: 'Home & Kitchen', icon: 'house', count: '1.8k+' },
-    { id: 3, name: 'Fashion & Kids', icon: 'checkroom', count: '3.2k+' },
-    { id: 4, name: 'Health & Beauty', icon: 'spa', count: '1.5k+' },
-    { id: 5, name: 'Business', icon: 'business-center', count: '900+' },
-    { id: 6, name: 'Construction', icon: 'construction', count: '600+' },
-    { id: 7, name: 'Books & Media', icon: 'menu-book', count: '2.1k+' },
-    { id: 8, name: 'Sports', icon: 'sports-basketball', count: '1.2k+' },
-  ];
+  /* =========================
+     Fetch Data
+  ========================= */
+const fetchData = useCallback(async () => {
+  try {
+    setLoading(true);
+    setError(null);
+const [categoriesRes, servicesRes, serviceTypesRes] = await Promise.all([
+    // Fetch categories with counts
+    categoriesAPI.getAllCategories(),
+        servicesAPI.getAllServices({ featured: true, limit: 3 }),
+        servicesAPI.getServiceTypes(),
+      ]);
 
-  const featuredServices = [
-    {
-      id: 1,
-      title: 'Home Cleaning',
-      rating: 4.8,
-      reviews: 1250,
-      price: '$25/hr',
-      image: './images/cleaning.jpg',
-      discount: '15% OFF'
-    },
-    {
-      id: 2,
-      title: 'Professional Massage',
-      rating: 4.9,
-      reviews: 890,
-      price: '$45/hr',
-      image: './images/massage.jpg',
-      discount: '20% OFF'
-    },
-    {
-      id: 3,
-      title: 'Personal Training',
-      rating: 4.7,
-      reviews: 650,
-      price: '$35/hr',
-      image: './images/training.jpg',
-      discount: '10% OFF'
-    },
-  ];
+      setCategories(categoriesRes.data?.categories || []);
+      setFeaturedServices(servicesRes.data?.services || []);
+      setServiceTypes(serviceTypesRes.data?.serviceTypes || []);
+  } catch (error) {
+    console.error('Home fetch error:', error);
+    Alert.alert('Error', 'Failed to load data. Please try again later.');
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+}, []);
 
-  const products = [
-    {
-      id: 1,
-      title: 'Wireless Headphones',
-      price: '$150',
-      image: require('./images/3D.png'),
-    },
-    {
-      id: 2,
-      title: 'Smartwatch',
-      price: '$120',
-      image: require('./images/3D.png'),
-    },
-    {
-      id: 3,
-      title: 'Bluetooth Speaker',
-      price: '$60',
-      image: require('./images/3D.png'),
-    },
-    {
-      id: 4,
-      title: 'Gaming Mouse',
-      price: '$40',
-      image: require('./images/3D.png'),
-    },
-    {
-      id: 5,
-      title: 'VR Headset',
-      price: '$300',
-      image: require('./images/3D.png'),
-    },
-    {
-      id: 6,
-      title: 'Portable Charger',
-      price: '$25',
-      image: require('./images/3D.png'),
-    },
-  ];
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // Simulate data refresh
-    setTimeout(() => setRefreshing(false), 2000);
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
-  const visibleCategories = showAllCategories ? categories : categories.slice(0, 4);
+  const visibleCategories = Array.isArray(categories) && categories.length > 0
+  ? (showAllCategories ? categories : categories.slice(0, 4))
+  : [];
+
+  /* =========================
+     Static Products (unchanged)
+  ========================= */
+  const products = [
+    { id: 1, title: 'Wireless Headphones', price: '$150', image: require('./images/3D.png') },
+    { id: 2, title: 'Smartwatch', price: '$120', image: require('./images/3D.png') },
+    { id: 3, title: 'Bluetooth Speaker', price: '$60', image: require('./images/3D.png') },
+    { id: 4, title: 'Gaming Mouse', price: '$40', image: require('./images/3D.png') },
+    { id: 5, title: 'VR Headset', price: '$300', image: require('./images/3D.png') },
+    { id: 6, title: 'Portable Charger', price: '$25', image: require('./images/3D.png') },
+  ];
 
   const renderProductCard = ({ item }) => (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate('AdditionalScreens', { screen: 'Playlist', productId: item.id })}
+      onPress={() =>
+        navigation.navigate('AdditionalScreens', {
+          screen: 'Playlist',
+          productId: item.id,
+        })
+      }
     >
       <Image style={styles.productImage} source={item.image} />
       <View style={styles.productInfo}>
@@ -110,30 +84,33 @@ export default function HomeScreen({ navigation }) {
     </TouchableOpacity>
   );
 
+  if (loading && !refreshing) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2E7D32" />
+      </View>
+    );
+  }
+
   return (
-    <View
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      {/* Header Section */}
-      <LinearGradient
-        colors={['#4CAF50', '#2E7D32']}
-        style={styles.headerGradient}
-      >
+    <View style={styles.container}>
+      {/* Header */}
+      <LinearGradient colors={['#4CAF50', '#2E7D32']} style={styles.headerGradient}>
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Hello, Ahana 👋</Text>
             <Text style={styles.subGreeting}>What service do you need today?</Text>
           </View>
-          <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('AdditionalScreens', {screen:'User'})}>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={() => navigation.navigate('AdditionalScreens', { screen: 'User' })}
+          >
             <Image style={styles.profileImage} source={require('./images/3D.png')} />
             <View style={styles.notificationBadge} />
           </TouchableOpacity>
         </View>
 
-        {/* Search Bar */}
+        {/* Search */}
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
@@ -149,106 +126,156 @@ export default function HomeScreen({ navigation }) {
         </View>
       </LinearGradient>
 
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-  {[
-    { action: 'Schedule', icon: 'event', screen: 'Search' },
-    { action: 'Favorites', icon: 'favorite', screen: 'Favorite' },
-    { action: 'Offers', icon: 'local-offer', screen: 'Offer' },
-    { action: 'History', icon: 'history', screen: 'History' },
-  ].map(({ action, icon, screen }, index) => (
-    <TouchableOpacity
-      key={index}
-      style={styles.quickActionButton}
-      onPress={() => navigation.navigate('AdditionalScreens', {screen})}
-    >
-      <View style={styles.quickActionIcon}>
-        <MaterialIcons name={icon} size={24} color="#2E7D32" />
-      </View>
-      <Text style={styles.quickActionText}>{action}</Text>
+      {/* Content */}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Featured Services / Service Types */}
+<View style={styles.section}>
+  <View style={styles.sectionHeader}>
+    <Text style={styles.sectionTitle}>
+      {serviceTypes.length > 0 ? 'Service Types' : 'Featured Services'}
+    </Text>
+    <TouchableOpacity>
+      <Text style={styles.seeAllButton}>See All</Text>
     </TouchableOpacity>
-  ))}
+  </View>
+
+  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    {serviceTypes.length > 0
+      ? serviceTypes.map(type => (
+          <TouchableOpacity
+            key={type._id}
+            style={styles.serviceCard}
+            onPress={() =>
+              navigation.navigate('AdditionalScreens', {
+                screen: 'Categories',
+                params: { serviceTypeId: type._id },
+              })
+            }
+          >
+            <View style={[styles.serviceImage, styles.serviceTypeIcon]}>
+              <MaterialIcons
+                name={type.icon || 'build'}
+                size={50}
+                color="#2E7D32"
+              />
+            </View>
+
+            <View style={styles.serviceInfo}>
+              <Text style={styles.serviceTitle}>{type.name}</Text>
+              <Text style={styles.reviewsText}>
+                {type.serviceCount || 0} services
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))
+      : featuredServices.map(service => (
+          <TouchableOpacity
+            key={service._id}
+            style={styles.serviceCard}
+            onPress={() =>
+              navigation.navigate('AdditionalScreens', {
+                screen: 'Service',
+                params: { serviceId: service._id },
+              })
+            }
+          >
+            <Image
+              style={styles.serviceImage}
+              source={{ uri: service.image || 'https://via.placeholder.com/300' }}
+            />
+
+            {service.discount > 0 && (
+              <View style={styles.discountBadge}>
+                <Text style={styles.discountText}>
+                  {service.discount}% OFF
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.serviceInfo}>
+              <Text style={styles.serviceTitle}>{service.name}</Text>
+
+              <View style={styles.ratingContainer}>
+                <MaterialIcons name="star" size={16} color="#FFD700" />
+                <Text style={styles.ratingText}>
+                  {service.averageRating?.toFixed(1) || 'New'}
+                </Text>
+                {service.reviewCount > 0 && (
+                  <Text style={styles.reviewsText}>
+                    ({service.reviewCount})
+                  </Text>
+                )}
+              </View>
+
+              <Text style={styles.servicePrice}>
+                ${service.price}/hr
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+  </ScrollView>
 </View>
 
-      {/* Featured Services Section */}
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Featured Services</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAllButton}>See All</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {featuredServices.map((service) => (
-            <TouchableOpacity key={service.id} style={styles.serviceCard}>
-              <Image style={styles.serviceImage} source={require('./images/3D.png')} />
-              {service.discount && (
-                <View style={styles.discountBadge}>
-                  <Text style={styles.discountText}>{service.discount}</Text>
-                </View>
-              )}
-              <View style={styles.serviceInfo}>
-                <Text style={styles.serviceTitle}>{service.title}</Text>
-                <View style={styles.ratingContainer}>
-                  <MaterialIcons name="star" size={16} color="#FFD700" />
-                  <Text style={styles.ratingText}>{service.rating}</Text>
-                  <Text style={styles.reviewsText}>({service.reviews} reviews)</Text>
-                </View>
-                <Text style={styles.servicePrice}>{service.price}</Text>
-              </View>
+
+        {/* Categories */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Categories</Text>
+            <TouchableOpacity onPress={() => setShowAllCategories(!showAllCategories)}>
+              <Text style={styles.seeAllButton}>
+                {showAllCategories ? 'Show Less' : 'See All'}
+              </Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+          </View>
+
+          <View style={styles.categoriesGrid}>
+            {visibleCategories.map(category => (
+              <TouchableOpacity
+                key={category._id}
+                style={[
+                  styles.categoryCard,
+                  selectedCategory === category._id && styles.selectedCategory,
+                ]}
+                onPress={() =>
+                  navigation.navigate('AdditionalScreens', {
+                    screen: 'Categories',
+                    params: { categoryId: category._id },
+                  })
+                }
+              >
+                <View style={styles.categoryIcon}>
+                  <MaterialIcons
+                    name={category.icon || 'category'}
+                    size={24}
+                    color="#2E7D32"
+                  />
+                </View>
+                <Text style={styles.categoryName}>{category.name}</Text>
+                <Text style={styles.categoryCount}>
+                  {category.serviceCount || 0}+
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
-      {/* Categories Section */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Categories</Text>
-          <TouchableOpacity onPress={() => setShowAllCategories(!showAllCategories)}>
-            <Text style={styles.seeAllButton}>
-              {showAllCategories ? 'Show Less' : 'See All'}
-            </Text>
-          </TouchableOpacity>
+        {/* Products */}
+        <View style={styles.section2}>
+          <Text style={styles.section2Title}>Products</Text>
+          <FlatList
+            data={products}
+            renderItem={renderProductCard}
+            keyExtractor={item => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={styles.productRow}
+            scrollEnabled={false}
+          />
         </View>
-        <View style={styles.categoriesGrid}>
-  {visibleCategories.map((category) => (
-    <TouchableOpacity
-      key={category.id}
-      style={[
-        styles.categoryCard,
-        selectedCategory === category.id && styles.selectedCategory,
-      ]}
-      onPress={() =>
-        navigation.navigate('AdditionalScreens', {screen:'Profile'}, {
-          categoryId: category.id,
-          categoryName: category.name,
-        })
-      }
-    >
-      <View style={styles.categoryIcon}>
-        <MaterialIcons name={category.icon} size={24} color="#2E7D32" />
-      </View>
-      <Text style={styles.categoryName}>{category.name}</Text>
-      <Text style={styles.categoryCount}>{category.count}</Text>
-    </TouchableOpacity>
-  ))}
-      </View>
-      </View>
-
-      {/* Product Grid Section */}
-      <View style={styles.section2}>
-        <Text style={styles.section2Title}>Products</Text>
-        <FlatList
-          data={products}
-          renderItem={renderProductCard}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.productRow}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
       </ScrollView>
     </View>
   );
