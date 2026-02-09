@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { servicesAPI } from './services/api';
+import theme from './theme';
 
 const ServicesPage = ({ navigation }) => {
   const [services, setServices] = useState([]);
@@ -70,27 +71,43 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     padding: 16, 
-    backgroundColor: '#f9f9f9' 
-},
+    backgroundColor: theme.colors.surface,
+  },
   title: { 
     fontSize: 24, 
-    fontWeight: 'bold', 
-    marginBottom: 16 
-},
+    fontWeight: '700', 
+    marginBottom: 16,
+    color: theme.colors.textPrimary,
+  },
   card: { 
     padding: 16, 
-    backgroundColor: '#fff', 
-    borderRadius: 8, 
-    marginBottom: 16 
-},
+    backgroundColor: theme.colors.card, 
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
+  },
   cardTitle: { 
     fontSize: 18, 
-    fontWeight: 'bold' 
-},
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
+  },
   cardDescription: { 
     fontSize: 14, 
-    color: '#555' 
-},
+    color: theme.colors.textSecondary,
+    marginTop: 4,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.surface,
+  },
+  error: {
+    fontSize: 16,
+    color: theme.colors.error,
+  },
 });
 
 export default ServicesPage;

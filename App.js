@@ -116,8 +116,15 @@ function MainTabs() {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#ACFFAC',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#06D6A0',
+        tabBarInactiveTintColor: '#A0AEC0',
+        tabBarStyle: {
+          backgroundColor: '#0F172A',
+          borderTopColor: '#1E293B',
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+        },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />

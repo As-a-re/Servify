@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
+import theme from './theme';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -136,71 +137,77 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.colors.surface,
   },
   header: {
-    backgroundColor: '#2E7D32',
-    padding: 16,
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
   },
   backButton: {
     padding: 8,
+    borderRadius: 8,
+    backgroundColor: theme.colors.card,
   },
   placeholder: {
     width: 40, 
   },
   listContainer: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
+    paddingHorizontal: 12,
+    paddingTop: 12,
     paddingBottom: 16, 
   },
   row: {
     justifyContent: 'space-between',
   },
   productCard: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: theme.colors.card,
+    borderRadius: 16,
     width: '48%',
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    overflow: 'hidden',
+    ...theme.shadows.sm,
   },
   productImage: {
     width: '100%',
     height: 150,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     resizeMode: 'cover',
+    backgroundColor: theme.colors.surfaceAlt,
   },
   productDetails: {
-    padding: 10,
+    padding: 12,
   },
   productName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontWeight: '700',
+    marginBottom: 6,
+    color: theme.colors.textPrimary,
   },
   productPrice: {
     fontSize: 14,
-    color: '#007AFF',
-    marginBottom: 5,
+    color: theme.colors.primary,
+    marginBottom: 6,
+    fontWeight: '600',
   },
   productRating: {
     flexDirection: 'row',
     alignItems: 'center',
+    color: theme.colors.textTertiary,
   },
 });
 

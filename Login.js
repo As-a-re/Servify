@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Pressable, Image, ImageBackground, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Pressable, Image, ImageBackground, Text, TextInput, StyleSheet, Alert, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authAPI } from './services/api';
+import theme from './theme';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -43,164 +44,210 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.main}>
-      <ImageBackground
-        source={require('./images/3D.png')}
-        style={styles.image}
-      >
-        <View style={styles.container}>
-          <Text style={styles.tan}>Login</Text>
+    <SafeAreaView style={styles.main}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>Sign in to your account</Text>
+        </View>
 
-          <View style={styles.man}>
+        <View style={styles.formContainer}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Email</Text>
             <TextInput
-              placeholder="Email"
+              placeholder="your@email.com"
               style={styles.input}
               onChangeText={setEmail}
               value={email}
               autoCapitalize="none"
               keyboardType="email-address"
+              placeholderTextColor={theme.colors.textHint}
             />
+          </View>
 
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Password</Text>
             <TextInput
-              placeholder="Password"
+              placeholder="••••••••"
               style={styles.input}
               secureTextEntry
               onChangeText={setPassword}
               value={password}
+              placeholderTextColor={theme.colors.textHint}
             />
+          </View>
 
-            <Pressable
-              style={styles.pen}
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? 'Logging in...' : 'Login'}
-              </Text>
-            </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.loginButton,
+              pressed && styles.loginButtonPressed,
+            ]}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            <Text style={styles.loginButtonText}>
+              {loading ? 'Signing in...' : 'Sign In'}
+            </Text>
+          </Pressable>
 
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>Or continue with</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <View style={styles.socialContainer}>
             <Pressable
-              style={styles.pern}
+              style={({ pressed }) => [
+                styles.socialButton,
+                pressed && styles.socialButtonPressed,
+              ]}
               onPress={() => navigation.navigate('Landing')}
             >
-              <Image
-                source={require('./images/3D.png')}
-                style={styles.icon}
-              />
-              <Text style={styles.socialText}>Google</Text>
+              <Text style={styles.socialButtonText}>Google</Text>
             </Pressable>
 
             <Pressable
-              style={styles.pean}
+              style={({ pressed }) => [
+                styles.socialButton,
+                pressed && styles.socialButtonPressed,
+              ]}
               onPress={() => navigation.navigate('Main')}
             >
-              <Image
-                source={require('./images/3D.png')}
-                style={styles.icon}
-              />
-              <Text style={styles.socialText}>Facebook</Text>
+              <Text style={styles.socialButtonText}>Facebook</Text>
             </Pressable>
-
-            <Text
-              style={styles.pien}
-              onPress={() => navigation.navigate('Signup')}
-            >
-              Create an account
-            </Text>
           </View>
         </View>
-      </ImageBackground>
-    </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Don't have an account? </Text>
+          <Pressable onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signupLink}>Sign up</Text>
+          </Pressable>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   main: {
     flex: 1,
+    backgroundColor: theme.colors.surface,
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 50,
+    paddingHorizontal: 24,
+    justifyContent: 'space-between',
+    paddingVertical: 20,
   },
-  image: {
+  header: {
+    marginTop: 32,
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    fontWeight: '400',
+  },
+  formContainer: {
     flex: 1,
-    resizeMode: 'cover',
     justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
   },
-  man: {
-    marginTop: 20,
-    alignItems: 'center',
-    width: '90%',
+  inputWrapper: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.textPrimary,
+    marginBottom: 8,
   },
   input: {
-    width: 300,
-    backgroundColor: '#141f2a',
-    height: 50,
-    marginTop: 15,
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: 'white',
-    color: 'white',
-    fontSize: 18,
-    paddingLeft: 15,
-    borderRadius: 5,
-  },
-  pen: {
-    backgroundColor: '#33FF6D',
-    width: 300,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    marginTop: 20,
-  },
-  pern: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    width: 300,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    marginTop: 15,
-  },
-  pean: {
-    flexDirection: 'row',
-    backgroundColor: 'blue',
-    width: 300,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    marginTop: 15,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  tan: {
-    color: '#33FF6D',
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  pien: {
-    color: 'white',
+    borderColor: theme.colors.border,
+    borderRadius: 12,
+    height: 48,
+    paddingHorizontal: 16,
     fontSize: 16,
-    marginTop: 25,
-    textAlign: 'center',
+    color: theme.colors.textPrimary,
+    fontWeight: '400',
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+  loginButton: {
+    backgroundColor: theme.colors.primary,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 24,
   },
-  socialText: {
+  loginButtonPressed: {
+    opacity: 0.8,
+  },
+  loginButtonText: {
+    color: theme.colors.surface,
     fontSize: 16,
-    color: '#333',
+    fontWeight: '700',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.border,
+  },
+  dividerText: {
+    fontSize: 13,
+    color: theme.colors.textTertiary,
+    marginHorizontal: 12,
+    fontWeight: '500',
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  socialButton: {
+    flex: 1,
+    height: 48,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.card,
+  },
+  socialButtonPressed: {
+    backgroundColor: theme.colors.surfaceAlt,
+  },
+  socialButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.textPrimary,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 20,
+  },
+  footerText: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+  },
+  signupLink: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: theme.colors.primary,
   },
 });

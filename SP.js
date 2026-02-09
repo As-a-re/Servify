@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import theme from "./theme";
 
 export default function SPScreen({ route, navigation }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -135,41 +136,44 @@ export default function SPScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // Styles remain the same
   container: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: theme.colors.surface,
   },
   header: {
-    padding: 20,
-    backgroundColor: "#2E7D32",
+    padding: 16,
+    backgroundColor: theme.colors.card,
     flexDirection: "row",
     alignItems: "center",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
   headerTextContainer: {
     flex: 1,
     alignItems: "center",
-    marginHorizontal: 10,
+    marginHorizontal: 12,
   },
   hamburgerButton: {
     width: 28,
+    padding: 4,
   },
   hamburgerPlaceholder: {
     width: 28,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    color: theme.colors.textPrimary,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 16,
-    color: "#e0e0e0",
-    marginTop: 8,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    marginTop: 4,
     textAlign: "center",
+    fontWeight: "400",
   },
   menu: {
     position: "absolute",
@@ -177,71 +181,84 @@ const styles = StyleSheet.create({
     left: 0,
     width: "60%",
     height: "100%",
-    backgroundColor: "#FFF",
+    backgroundColor: theme.colors.card,
     paddingTop: 50,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     elevation: 5,
     zIndex: 10,
+    borderRightWidth: 1,
+    borderRightColor: theme.colors.border,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 24,
+    paddingHorizontal: 8,
   },
   menuText: {
-    fontSize: 18,
-    marginLeft: 15,
-    color: "#333",
+    fontSize: 16,
+    marginLeft: 16,
+    color: theme.colors.textPrimary,
+    fontWeight: "500",
   },
   chatContainer: {
     flexGrow: 1,
-    padding: 20,
+    padding: 16,
   },
   messageBubble: {
     maxWidth: "75%",
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    marginBottom: 12,
   },
   userBubble: {
     alignSelf: "flex-end",
-    backgroundColor: "#34D399",
+    backgroundColor: theme.colors.primary,
   },
   providerBubble: {
     alignSelf: "flex-start",
-    backgroundColor: "#e5e5ea",
+    backgroundColor: theme.colors.card,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   messageText: {
     fontSize: 16,
+    fontWeight: "400",
   },
   emptyText: {
     textAlign: "center",
-    color: "#aaa",
+    color: theme.colors.textTertiary,
     marginTop: 20,
     fontSize: 16,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: 12,
     borderTopWidth: 1,
-    borderTopColor: "#ddd",
+    borderTopColor: theme.colors.border,
   },
   input: {
     flex: 1,
     height: 40,
-    backgroundColor: "#f1f1f1",
+    backgroundColor: theme.colors.card,
     borderRadius: 8,
-    paddingHorizontal: 10,
-    marginRight: 10,
+    paddingHorizontal: 12,
+    marginRight: 8,
+    color: theme.colors.textPrimary,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   sendButton: {
-    backgroundColor: "#2E7D32",
-    padding: 10,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 8,
   },
   sendButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: theme.colors.surface,
+    fontWeight: "700",
+    fontSize: 14,
   },
 });

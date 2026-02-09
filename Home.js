@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, TextInput,
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { categoriesAPI, servicesAPI } from './services/api';
+import theme from './theme';
 
 export default function HomeScreen({ navigation }) {
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -68,7 +69,12 @@ const [categoriesRes, servicesRes, serviceTypesRes] = await Promise.all([
 
   const renderProductCard = ({ item }) => (
     <TouchableOpacity
-      style={styles.productCard}
+      style={[
+        styles.productCard,
+        {
+          activeOpacity: 0.7,
+        },
+      ]}
       onPress={() =>
         navigation.navigate('AdditionalScreens', {
           screen: 'Playlist',
@@ -284,13 +290,14 @@ const [categoriesRes, servicesRes, serviceTypesRes] = await Promise.all([
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.surface,
   },
   headerGradient: {
     padding: 20,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+    backgroundColor: theme.colors.surface,
   },
   header: {
     flexDirection: 'row',
@@ -299,70 +306,67 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   greeting: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontSize: 28,
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
   },
   subGreeting: {
     fontSize: 16,
-    color: '#E0E0E0',
+    color: theme.colors.textSecondary,
     marginTop: 5,
+    fontWeight: '400',
   },
   profileButton: {
     position: 'relative',
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     borderWidth: 2,
-    borderColor: '#FFF',
-    marginLeft: -50,
-    marginTop: -30,
+    borderColor: theme.colors.white,
+    marginLeft: -48,
+    marginTop: -24,
   },
   notificationBadge: {
     position: 'absolute',
-    right: 0,
-    top: 0,
-    backgroundColor: '#FF4444',
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    right: 2,
+    top: 2,
+    backgroundColor: theme.colors.error,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     borderWidth: 2,
-    borderColor: '#FFF',
+    borderColor: theme.colors.white,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: theme.colors.card,
     borderRadius: 12,
     paddingHorizontal: 15,
     marginTop: 10,
     height: 50,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
   },
   searchIcon: {
     marginRight: 10,
+    color: theme.colors.textTertiary,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.textPrimary,
+    fontWeight: '400',
   },
   filterButton: {
     padding: 8,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: theme.colors.card,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   quickActions: {
     flexDirection: 'row',
@@ -412,81 +416,74 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
   },
   seeAllButton: {
-    color: '#2E7D32',
+    color: theme.colors.primary,
     fontSize: 14,
     fontWeight: '600',
   },
   serviceCard: {
     width: 280,
-    backgroundColor: '#FFF',
-    borderRadius: 15,
+    backgroundColor: theme.colors.card,
+    borderRadius: 16,
     marginRight: 15,
     overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.md,
   },
   serviceImage: {
     width: '100%',
     height: 150,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    backgroundColor: theme.colors.surfaceAlt,
   },
   serviceInfo: {
-    padding: 15,
+    padding: 16,
   },
   serviceTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '600',
+    color: theme.colors.textPrimary,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 8,
   },
   ratingText: {
     fontSize: 14,
-    color: '#333',
+    color: theme.colors.textPrimary,
     marginLeft: 5,
     fontWeight: '600',
   },
   reviewsText: {
     fontSize: 12,
-    color: '#666',
+    color: theme.colors.textTertiary,
     marginLeft: 5,
   },
   servicePrice: {
     fontSize: 16,
-    color: '#2E7D32',
-    fontWeight: 'bold',
-    marginTop: 5,
+    color: theme.colors.primary,
+    fontWeight: '700',
+    marginTop: 8,
   },
   discountBadge: {
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#FF4444',
+    backgroundColor: theme.colors.error,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
   },
   discountText: {
-    color: '#FFF',
+    color: theme.colors.white,
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   categoriesGrid: {
     flexDirection: 'row',
@@ -495,93 +492,80 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '48%',
-    backgroundColor: '#FFF',
+    backgroundColor: theme.colors.card,
     borderRadius: 12,
-    padding: 15,
+    padding: 16,
     marginBottom: 15,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
   },
   categoryIcon: {
     width: 40,
     height: 40,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.surfaceAlt,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   categoryName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: theme.colors.textPrimary,
     marginBottom: 5,
   },
   categoryCount: {
     fontSize: 12,
-    color: '#666',
+    color: theme.colors.textTertiary,
   },
   selectedCategory: {
-    backgroundColor: '#E8F5E9',
-    borderColor: '#2E7D32',
-    borderWidth: 1,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.primary,
+    borderWidth: 2,
   },
   section2: {
     padding: 20,
   },
   section2Title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
     marginBottom: 10,
   },
   productRow: {
     justifyContent: 'space-between',
   },
   productCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 15,
+    backgroundColor: theme.colors.card,
+    borderRadius: 16,
     marginBottom: 15,
     overflow: 'hidden',
     flex: 1,
     marginHorizontal: 5,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
   },
   productImage: {
     width: '100%',
     height: 120,
+    backgroundColor: theme.colors.surfaceAlt,
   },
   productInfo: {
-    padding: 10,
+    padding: 12,
   },
   productTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: theme.colors.textPrimary,
   },
   productPrice: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginTop: 5,
+    fontWeight: '700',
+    color: theme.colors.primary,
+    marginTop: 6,
   },
 });

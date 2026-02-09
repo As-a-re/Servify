@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import theme from './theme';
 
 const FavoritesPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -82,7 +83,7 @@ const FavoritesPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.colors.surface,
   },
   menu: {
     position: 'absolute',
@@ -90,53 +91,69 @@ const styles = StyleSheet.create({
     left: 0,
     width: '60%',
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.card,
     padding: 16,
     zIndex: 1000,
     elevation: 10,
+    borderRightWidth: 1,
+    borderRightColor: theme.colors.border,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 4,
   },
   menuText: {
-    marginLeft: 8,
+    marginLeft: 12,
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.textPrimary,
+    fontWeight: '500',
   },
   header: {
-    backgroundColor: '#2E7D32',
-    padding: 16,
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
     marginLeft: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 16,
     padding: 16,
+    color: theme.colors.textPrimary,
   },
   card: {
     padding: 16,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 16,
+    backgroundColor: theme.colors.card,
+    borderRadius: 12,
+    marginBottom: 12,
     marginHorizontal: 16,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '700',
+    color: theme.colors.textPrimary,
+    marginBottom: 4,
   },
   cardDescription: {
     fontSize: 14,
-    color: '#555',
+    color: theme.colors.textSecondary,
+    fontWeight: '400',
   },
 });
 
