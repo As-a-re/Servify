@@ -40,6 +40,18 @@ export const Emergency: React.FC = () => {
     'Rapid heartbeat',
   ];
 
+  const handleCall911 = () => {
+    // For production: window.location.href = 'tel:911'
+    // For demo: Show confirmation modal
+    alert('🚨 EMERGENCY: Dialing 911...\n\nIn a real app, this would connect to emergency services immediately.');
+  };
+
+  const handleCallNumber = (number: string) => {
+    // For production: window.location.href = `tel:${number}`
+    // For demo: Show confirmation modal
+    alert(`📞 Calling ${number}...\n\nIn a real app, this would connect to the phone system.`);
+  };
+
   return (
     <div className={styles.container}>
       {!emergencyLevel ? (
@@ -60,7 +72,7 @@ export const Emergency: React.FC = () => {
                 variant="danger"
                 size="lg"
                 fullWidth
-                onClick={() => window.location.href = 'tel:911'}
+                onClick={handleCall911}
               >
                 Call 911 Now
               </Button>
@@ -117,7 +129,12 @@ export const Emergency: React.FC = () => {
                 <span className={styles.resourceIcon}>📞</span>
                 <h3 className={styles.resourceTitle}>Poison Control</h3>
                 <p className={styles.resourceDescription}>1-800-222-1222</p>
-                <Button variant="outline" size="sm" fullWidth>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  fullWidth
+                  onClick={() => handleCallNumber('1-800-222-1222')}
+                >
                   Call
                 </Button>
               </div>
