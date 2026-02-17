@@ -1,0 +1,334 @@
+.container {
+  min-height: 100vh;
+  background-color: #F9FAFB;
+  padding-bottom: 5rem;
+}
+
+.header {
+  background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.section {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+/* Profile Header */
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #E5E7EB;
+}
+
+.profileAvatar {
+  font-size: 3rem;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F0F9FF;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.profileName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+}
+
+.pregnancyInfo {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sectionHeader .sectionTitle {
+  margin-bottom: 0;
+}
+
+/* Info Cards */
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.infoCard {
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.75rem;
+}
+
+.infoLabel {
+  font-size: 0.875rem;
+  color: #6B7280;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.infoValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.conditionCard {
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.conditionLabel {
+  font-size: 0.875rem;
+  color: #6B7280;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.conditionValue {
+  font-size: 0.95rem;
+  color: #111827;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Contact Cards */
+.contactCard {
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.contactLabel {
+  font-size: 0.875rem;
+  color: #6B7280;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.contactValue {
+  font-size: 0.95rem;
+  color: #111827;
+  margin: 0;
+}
+
+/* Emergency Contacts */
+.contactsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.emergencyContact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.75rem;
+  transition: all 250ms ease-in-out;
+}
+
+.emergencyContact:hover {
+  border-color: #0EA5E9;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.contactInfo {
+  flex: 1;
+}
+
+.contactName {
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.contactRelationship {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin: 0 0 0.25rem 0;
+}
+
+.contactPhone {
+  font-size: 0.875rem;
+  color: #0EA5E9;
+  margin: 0;
+  font-weight: 500;
+}
+
+.editContactButton {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #6B7280;
+  padding: 0.5rem;
+  transition: color 250ms ease-in-out;
+}
+
+.editContactButton:hover {
+  color: #0EA5E9;
+}
+
+/* Settings Items */
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  transition: all 250ms ease-in-out;
+}
+
+.settingItem:hover {
+  border-color: #D1D5DB;
+}
+
+.settingInfo {
+  flex: 1;
+}
+
+.settingLabel {
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.settingDescription {
+  font-size: 0.875rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 3rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  display: none;
+}
+
+.toggle label {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #D1D5DB;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 250ms ease-in-out;
+  position: relative;
+}
+
+.toggle label::after {
+  content: '';
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: white;
+  border-radius: 50%;
+  top: 0.125rem;
+  left: 0.125rem;
+  transition: left 250ms ease-in-out;
+}
+
+.toggle input:checked + label {
+  background-color: #0EA5E9;
+}
+
+.toggle input:checked + label::after {
+  left: 1.625rem;
+}
+
+/* Spacer */
+.spacer {
+  height: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding-bottom: 6rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileHeader {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .profileAvatar {
+    font-size: 2.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .header {
+    padding: 1.5rem 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
